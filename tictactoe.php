@@ -1,13 +1,71 @@
 <?php
 
+require_once(__DIR__ . '/vendor/autoload.php');
+
+class TicTacToe
+{
+    private Monolog\Logger $log;
+    private Board $board;
+
+    function __construct()
+    {
+        $this->log = new Monolog\Logger('name');
+        $this->log->pushHandler(new Monolog\Handler\StreamHandler('tictactoe.log', Monolog\Logger::WARNING));
+        $this->board = new Board();
+    }
+
+    public function take_turn(string $marker, int $x, int $y)
+    {
+        if ($marker == "X") {
+            $this->print_result("Placing " . $marker . " at " . $x . "," . $y, $this->board->place_X($x, $y));
+            return;
+        }
+
+        if ($marker == "O") {
+            $this->print_result("Placing " . $marker . " at " . $x . "," . $y, $this->board->place_O($x, $y));
+            return;
+        }
+
+        echo "Invalid marker ( " . $marker . " ) was provided!\n";
+    }
+
+    public function reset_game()
+    {
+        $this->board->reset_board();
+    }
+
+    private function print_result(string $move_desc, int $result)
+    {
+        $this->board->draw();
+        echo "\n";
+        if ($result == Board::RESULT_INVALID_MOVE) {
+            echo $move_desc . " results in an invalid move!\n---\n";
+            $this->log->addWarning('An invalid move was attempted!');
+            return;
+        }
+        if ($result == Board::RESULT_WINNING_MOVE) {
+            echo $move_desc . " results in a winner!\n---\n";
+            return;
+        }
+        if ($result == Board::RESULT_DRAW) {
+            echo $move_desc . " results in a draw!\n---\n";
+            return;
+        }
+        if ($result == Board::RESULT_GAME_CONTINUES) {
+            echo $move_desc . " results in the game continuing!\n---\n";
+            return;
+        }
+    }
+}
+
 class Board
 {
-    private $board;
+    private array $board;
 
-    const RESULT_INVALID_MOVE = 0;
-    const RESULT_WINNING_MOVE = 1;
-    const RESULT_DRAW = 2;
-    const RESULT_GAME_CONTINUES = 3;
+    public const RESULT_INVALID_MOVE = 0;
+    public const RESULT_WINNING_MOVE = 1;
+    public const RESULT_DRAW = 2;
+    public const RESULT_GAME_CONTINUES = 3;
 
     function __construct()
     {
