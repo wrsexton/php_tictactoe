@@ -11,6 +11,11 @@ class Board
 
     function __construct()
     {
+        $this->reset_board();
+    }
+
+    public function reset_board()
+    {
         $this->board = [
             ["", "", ""],
             ["", "", ""],
@@ -18,7 +23,7 @@ class Board
         ];
     }
 
-    private function check_for_winner($marker)
+    private function check_for_winner($marker): bool
     {
         if ($this->check_cols_and_rows($marker)) {
             return true;
@@ -26,9 +31,10 @@ class Board
         if ($this->check_diags($marker)) {
             return true;
         }
+        return false;
     }
 
-    private function check_cols_and_rows($marker)
+    private function check_cols_and_rows($marker): bool
     {
         $boardsize = count($this->board);
         for ($i = 0; $i < $boardsize; $i++) {
@@ -59,7 +65,7 @@ class Board
         return false;
     }
 
-    private function check_diags($marker)
+    private function check_diags($marker): bool
     {
         $boardsize = count($this->board);
         // Evaluate Left-To-Right Diag
@@ -84,7 +90,7 @@ class Board
         return true;
     }
 
-    private function check_board_full()
+    private function check_board_full(): bool
     {
         $empty_flag = false;
         array_walk_recursive($this->board, function ($value, $key) use (&$empty_flag) {
@@ -95,7 +101,7 @@ class Board
         return !$empty_flag;
     }
 
-    private function place_marker($marker, $x, $y)
+    private function place_marker($marker, $x, $y): int
     {
         if ($this->board[$y][$x]) {
             return self::RESULT_INVALID_MOVE;
@@ -116,20 +122,20 @@ class Board
         return self::RESULT_GAME_CONTINUES;
     }
 
-    public function place_X($x, $y)
+    public function place_X($x, $y): int
     {
         return $this->place_marker("X", $x, $y);
     }
 
-    public function place_O($x, $y)
+    public function place_O($x, $y): int
     {
         return $this->place_marker("O", $x, $y);
     }
 
     public function draw()
     {
-        foreach($this->board as $row){
-            foreach($row as $marker){
+        foreach ($this->board as $row) {
+            foreach ($row as $marker) {
                 echo " | " . ($marker ? $marker : "-");
             }
             echo " | \n";
