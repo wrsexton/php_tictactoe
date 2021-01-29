@@ -2,15 +2,19 @@
 
 require_once(__DIR__ . '/vendor/autoload.php');
 
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
+
 class TicTacToe
 {
-    private Monolog\Logger $log;
+    private Logger $log;
     private Board $board;
 
     function __construct()
     {
-        $this->log = new Monolog\Logger('name');
-        $this->log->pushHandler(new Monolog\Handler\StreamHandler('tictactoe.log', Monolog\Logger::WARNING));
+        $this->log = new Logger('tictactoe_logger');
+        $this->log->pushHandler(new StreamHandler('tictactoe.log', Logger::WARNING));
         $this->board = new Board();
     }
 
